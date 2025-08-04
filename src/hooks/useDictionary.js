@@ -3,7 +3,7 @@ import { useState } from "react";
 
 function useDictionary() {
     const [word, setWord] = useState("");
-    const [meaning, setMeaning] = useState("");
+    const [meaning, setMeaning] = useState([]);
     const [definition, setDefinition] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -24,29 +24,36 @@ function useDictionary() {
         try {
             const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
             const data = await res.json();
-            setDefinition(data[0]?.meanings[0]?.definitions[0]?.definition || "No defintiton found.")
+            const allMeanings = data[0]?.meanings || [];
+            setMeaning(allMeanings);  // now it's an array
+            setResult(data);
             setIsLoading(false)
             console.log("API data :", data);
-            setResult(data);
         }
         catch (error) {
             setError("Word not found or failed to fetch.");
-            setDefinition(""); // clear old definition
+            setMeaning([]);            // ✅ clear old meanings
+            setDefinition("");         // ✅ clear old definition
             setResult(null);
 
         }
         finally {
             setIsLoading(false);
         }
-        
+
     }
     return {
-        word,
-        setWord,
-        definition,
-        isLoading,
-        handleSearch,
-        error
+       word,
+    setWord,
+    meaning,          
+    setMeaning,       
+    definition,
+    setDefinition,    
+    isLoading,
+    handleSearch,
+    error,
+    result,           
+    setResult      
     };
 
 }
