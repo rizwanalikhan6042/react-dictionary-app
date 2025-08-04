@@ -11,8 +11,8 @@ function useDictionary() {
 
 
     const handleSearch = (e) => {
-        e.preventDefault(); 
-        fetchMeaning();    
+        e.preventDefault();
+        fetchMeaning();
     };
 
     const fetchMeaning = async () => {
@@ -30,18 +30,23 @@ function useDictionary() {
             setResult(data);
         }
         catch (error) {
-            setError("Failed to fetch meaning.");
+            setError("Word not found or failed to fetch.");
+            setDefinition(""); // clear old definition
+            setResult(null);
+
         }
         finally {
             setIsLoading(false);
         }
+        
     }
     return {
         word,
         setWord,
         definition,
         isLoading,
-        handleSearch
+        handleSearch,
+        error
     };
 
 }
