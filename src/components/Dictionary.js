@@ -1,9 +1,10 @@
 import React from "react";
 import useDictionary from "../hooks/useDictionary";
+import "../style/dictionary.css";
 
 function Dictionary() {
   const {
-    word, setWord, meaning = [], // ✅ default value added here
+    word, setWord, meaning = [], 
     setMeaning, isLoading,
     handleSearch, definition, setResult,
     result, setDefinition, error
