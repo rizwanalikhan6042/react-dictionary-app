@@ -7,7 +7,7 @@ function Dictionary() {
     word, setWord, meaning = [],
     setMeaning, isLoading,
     handleSearch, definition, setResult,
-    result, setDefinition, error, audio
+    result, setDefinition, error, audio,handlePlayDefinitions
   } = useDictionary();
 
   return (
@@ -28,11 +28,15 @@ function Dictionary() {
         {isLoading ? "Searching..." : "Search"}
       </button>
       {error && <div className="error-message">{error}</div>}
-         {audio && (
+      {audio && (
         <div style={{ marginTop: "1rem" }}>
-          <button onClick={() => new Audio(audio).play()}>
-            🔊 Play Pronunciation
-          </button>
+          {/* Replace old Pronounce button with new Play Definitions button */}
+          {meaning.length > 0 && (
+            <button onClick={handlePlayDefinitions}>
+              ▶️ Play Definitions
+            </button>
+          )}
+
         </div>
       )}
 
@@ -52,17 +56,20 @@ function Dictionary() {
               {/* Loop through first 3 definitions for each part of speech */}
               <ul>
                 {(entry.definitions || []).slice(0, 3).map((def, i) => (
-                  <li key={i}>{def.definition}</li>
+                  <li key={i}>
+                    {def.definition}
+
+                  </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
       )}
-      
-   
+
+
       {/* Show error if exists */}
-      
+
     </div>
   );
 }
