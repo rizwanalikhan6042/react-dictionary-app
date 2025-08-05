@@ -4,10 +4,10 @@ import "../style/dictionary.css";
 
 function Dictionary() {
   const {
-    word, setWord, meaning = [], 
+    word, setWord, meaning = [],
     setMeaning, isLoading,
     handleSearch, definition, setResult,
-    result, setDefinition, error
+    result, setDefinition, error, audio
   } = useDictionary();
 
   return (
@@ -27,6 +27,14 @@ function Dictionary() {
       <button onClick={handleSearch} disabled={isLoading}>
         {isLoading ? "Searching..." : "Search"}
       </button>
+      {error && <div className="error-message">{error}</div>}
+         {audio && (
+        <div style={{ marginTop: "1rem" }}>
+          <button onClick={() => new Audio(audio).play()}>
+            🔊 Play Pronunciation
+          </button>
+        </div>
+      )}
 
       {/* Show definitions only if 'meaning' is a valid array and has entries */}
       {Array.isArray(meaning) && meaning.length > 0 && (
@@ -51,9 +59,10 @@ function Dictionary() {
           ))}
         </div>
       )}
-
+      
+   
       {/* Show error if exists */}
-      {error && <div className="error-message">{error}</div>}
+      
     </div>
   );
 }
