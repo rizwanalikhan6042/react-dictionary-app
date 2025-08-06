@@ -7,7 +7,7 @@ function Dictionary() {
     word, setWord, meaning = [],
     setMeaning, isLoading,
     handleSearch, definition, setResult,
-    result, setDefinition, error, audio, handlePlayDefinitions, searchHistory, setSearchHistory
+    result, setDefinition, error, audio, searchHistory,handlePlayDefinitions, setSearchHistory, playDefinitions, toggleDefinitionAudio, isPlaying,setIsPlaying
   } = useDictionary();
 
   return (
@@ -32,9 +32,13 @@ function Dictionary() {
         <div style={{ marginTop: "1rem" }}>
           {/* Replace old Pronounce button with new Play Definitions button */}
           {meaning.length > 0 && (
-            <button onClick={handlePlayDefinitions}>
-              ▶️ Play Definitions
+            // <button onClick={handlePlayDefinitions}>
+            //   ▶️ Play Definitions
+            // </button>
+            <button onClick={toggleDefinitionAudio}>
+              {isPlaying ? "Stop Audio" : "Play Audio"}
             </button>
+
           )}
 
         </div>

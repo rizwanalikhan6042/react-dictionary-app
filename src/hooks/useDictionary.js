@@ -1,4 +1,4 @@
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 
 function useDictionary() {
     const [word, setWord] = useState("");
@@ -7,7 +7,8 @@ function useDictionary() {
     const [error, setError] = useState(null);
     const [audio, setAudio] = useState(null);
     const [definition, setDefinition] = useState("");
-    const [searchHistory,setSearchHistory]=useState([])
+    const [searchHistory, setSearchHistory] = useState([])
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const handleSearch = async () => {
         // ⚠️ Check for empty word
@@ -26,18 +27,18 @@ function useDictionary() {
         try {
             const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
             const data = await response.json();
-            
+
 
             // ❌ If response is not an array, it's an error
             if (!Array.isArray(data)) {
                 setError(data.message || "Word not found.");
                 return;
             }
-            if(word){
-                const alreadyExists=searchHistory.includes(word);
-                if(!alreadyExists){
-                    setSearchHistory(function(previousHistory){
-                        return[word,...previousHistory];
+            if (word) {
+                const alreadyExists = searchHistory.includes(word);
+                if (!alreadyExists) {
+                    setSearchHistory(function (previousHistory) {
+                        return [word, ...previousHistory];
                     })
                 }
             }
@@ -74,14 +75,15 @@ function useDictionary() {
             setIsLoading(false);
         }
     };
-   useEffect(()=>{
-    localStorage.setItem('searchHistory',JSON.stringify(searchHistory));
-   },[searchHistory]);
+    useEffect(() => {
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }, [searchHistory]);
 
     const handlePlayDefinitions = () => {
 
         if (!meaning || meaning.length === 0) return;
         let index = 0;
+
         const speakNext = () => {
             if (index >= meaning.length) return;
             const definitions = meaning[index].definitions;
@@ -100,6 +102,23 @@ function useDictionary() {
         }
         speakNext()
     }
+    
+    
+   
+
+    const toggleDefinitionAudio = () => {
+        if (isPlaying) {
+            // If already playing, stop it
+            speechSynthesis.cancel();
+            setIsPlaying(false);
+        } else {
+            // If not playing, start speaking definitions
+            handlePlayDefinitions();
+            setIsPlaying(true)
+        }
+    };
+
+
     return {
         word,
         setWord,
@@ -107,8 +126,9 @@ function useDictionary() {
         isLoading,
         handleSearch,
         error,
-        audio, handlePlayDefinitions, definition, setDefinition
-        ,searchHistory,setSearchHistory
+        audio, definition, setDefinition
+        , searchHistory, setSearchHistory, toggleDefinitionAudio, isPlaying,setIsPlaying,handlePlayDefinitions
+
     };
 }
 
