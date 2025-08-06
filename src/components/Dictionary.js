@@ -4,10 +4,10 @@ import "../style/dictionary.css";
 
 function Dictionary() {
   const {
-    word, setWord, meaning = [], 
+    word, setWord, meaning = [],
     setMeaning, isLoading,
     handleSearch, definition, setResult,
-    result, setDefinition, error
+    result, setDefinition, error, audio,handlePlayDefinitions
   } = useDictionary();
 
   return (
@@ -27,6 +27,18 @@ function Dictionary() {
       <button onClick={handleSearch} disabled={isLoading}>
         {isLoading ? "Searching..." : "Search"}
       </button>
+      {error && <div className="error-message">{error}</div>}
+      {audio && (
+        <div style={{ marginTop: "1rem" }}>
+          {/* Replace old Pronounce button with new Play Definitions button */}
+          {meaning.length > 0 && (
+            <button onClick={handlePlayDefinitions}>
+              ▶️ Play Definitions
+            </button>
+          )}
+
+        </div>
+      )}
 
       {/* Show definitions only if 'meaning' is a valid array and has entries */}
       {Array.isArray(meaning) && meaning.length > 0 && (
@@ -44,7 +56,10 @@ function Dictionary() {
               {/* Loop through first 3 definitions for each part of speech */}
               <ul>
                 {(entry.definitions || []).slice(0, 3).map((def, i) => (
-                  <li key={i}>{def.definition}</li>
+                  <li key={i}>
+                    {def.definition}
+
+                  </li>
                 ))}
               </ul>
             </div>
@@ -52,8 +67,9 @@ function Dictionary() {
         </div>
       )}
 
+
       {/* Show error if exists */}
-      {error && <div className="error-message">{error}</div>}
+
     </div>
   );
 }

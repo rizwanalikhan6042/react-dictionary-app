@@ -68,3 +68,35 @@ button:disabled {
   color: red;
   font-weight: bold;
 }
+@media screen and (max-width: 600px) {
+  .dictionary-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .definition-box {
+    padding: 1rem;
+  }
+
+  .definition-box h2 {
+    font-size: 1.2rem;
+  }
+
+  .definition-box h4 {
+    font-size: 1rem;
+  }
+
+  .definition-box li {
+    font-size: 0.95rem;
+  }
+}
