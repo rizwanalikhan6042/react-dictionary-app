@@ -100,3 +100,22 @@ button:disabled {
     font-size: 0.95rem;
   }
 }
+/* Light mode */
+body.light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Dark mode */
+body.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+/* Optional: toggle button styling */
+.toggle-btn {
+  padding: 10px 20px;
+  margin: 20px;
+  cursor: pointer;
+}
+

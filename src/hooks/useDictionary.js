@@ -9,8 +9,11 @@ function useDictionary() {
     const [definition, setDefinition] = useState("");
     const [searchHistory, setSearchHistory] = useState([])
     const [isPlaying, setIsPlaying] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
 
     const handleSearch = async () => {
+        speechSynthesis.cancel(); // ⛔ Stop previous audio if playing
+        setIsPlaying(false);
         // ⚠️ Check for empty word
         if (!word.trim()) {
             setError("Please enter a word.");
@@ -27,8 +30,6 @@ function useDictionary() {
         try {
             const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
             const data = await response.json();
-
-
             // ❌ If response is not an array, it's an error
             if (!Array.isArray(data)) {
                 setError(data.message || "Word not found.");
@@ -78,6 +79,14 @@ function useDictionary() {
     useEffect(() => {
         localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
     }, [searchHistory]);
+    useEffect(() => {
+        document.body.className = darkMode ? 'dark' : 'light';
+
+    }, [darkMode]);
+
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+    }
 
     const handlePlayDefinitions = () => {
 
@@ -102,9 +111,9 @@ function useDictionary() {
         }
         speakNext()
     }
-    
-    
-   
+
+
+
 
     const toggleDefinitionAudio = () => {
         if (isPlaying) {
@@ -127,8 +136,8 @@ function useDictionary() {
         handleSearch,
         error,
         audio, definition, setDefinition
-        , searchHistory, setSearchHistory, toggleDefinitionAudio, isPlaying,setIsPlaying,handlePlayDefinitions
-
+        , searchHistory, setSearchHistory, toggleDefinitionAudio, isPlaying, setIsPlaying, handlePlayDefinitions
+        , darkMode, setDarkMode, toggleDarkMode
     };
 }
 

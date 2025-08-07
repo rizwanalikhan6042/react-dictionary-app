@@ -7,12 +7,22 @@ function Dictionary() {
     word, setWord, meaning = [],
     setMeaning, isLoading,
     handleSearch, definition, setResult,
-    result, setDefinition, error, audio, searchHistory,handlePlayDefinitions, setSearchHistory, playDefinitions, toggleDefinitionAudio, isPlaying,setIsPlaying
+    result, setDefinition, error, audio, searchHistory,darkMode,setDarkMode,toggleDarkMode,handlePlayDefinitions, setSearchHistory, playDefinitions, toggleDefinitionAudio, isPlaying,setIsPlaying
   } = useDictionary();
 
   return (
+     
     <div className="dictionary-container">
+    {/* <div>
+      <button onClick={toggleDarkMode} className="toggle-btn">
+        {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      </button>
+
+      <h1>Hello World</h1>
+      <p>This is {darkMode ? 'Dark' : 'Light'} mode.</p>
+    </div>       */}
       {/* Input field for typing the word */}
+
       <input
         type="text"
         value={word}
