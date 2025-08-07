@@ -118,4 +118,31 @@ body.dark {
   margin: 20px;
   cursor: pointer;
 }
+/* 🔲 Dark mode overrides */
+body.dark .dictionary-container {
+  background-color: #34e95892;
+  color: #f9d4d4;
+}
+
+body.dark .definition-box {
+  background-color: #eedfdf;
+  border-color: #444;
+  color: #efdddd;
+}
+
+body.dark input[type="text"] {
+  background-color: #e8b5b5;
+  color: #ac5656;
+  border: 1px solid #555;
+}
+
+body.dark button {
+  background-color: #444;
+  color: #fff;
+}
+
+body.dark .error-message {
+  color: #ff6b6b;
+}
+
 

@@ -94,7 +94,11 @@ function useDictionary() {
         let index = 0;
 
         const speakNext = () => {
-            if (index >= meaning.length) return;
+            if (index >= meaning.length) {
+                setIsPlaying(false);
+                return;
+
+            }
             const definitions = meaning[index].definitions;
             if (!definitions || definitions.length === 0) {
                 index++;
@@ -109,6 +113,7 @@ function useDictionary() {
             }
             speechSynthesis.speak(utterance);
         }
+        setIsPlaying(true)
         speakNext()
     }
 
