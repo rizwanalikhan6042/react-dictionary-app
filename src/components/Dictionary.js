@@ -7,7 +7,7 @@ function Dictionary() {
     word, setWord, meaning = [],
     setMeaning, isLoading,
     handleSearch, definition, setResult,
-    result, setDefinition, error, audio,handlePlayDefinitions
+    result, setDefinition, error, audio, handlePlayDefinitions, searchHistory, setSearchHistory
   } = useDictionary();
 
   return (
@@ -68,7 +68,16 @@ function Dictionary() {
       )}
 
 
-      {/* Show error if exists */}
+      {searchHistory.length > 0 && (
+        <div>
+          <h2>Search History:</h2>
+          <ul>
+            {searchHistory.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
     </div>
   );
