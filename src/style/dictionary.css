@@ -68,6 +68,7 @@ button:disabled {
   color: red;
   font-weight: bold;
 }
+
 @media screen and (max-width: 600px) {
   .dictionary-container {
     padding: 1rem;
@@ -100,6 +101,7 @@ button:disabled {
     font-size: 0.95rem;
   }
 }
+
 /* Light mode */
 body.light {
   background-color: #ffffff;
@@ -118,6 +120,7 @@ body.dark {
   margin: 20px;
   cursor: pointer;
 }
+
 /* 🔲 Dark mode overrides */
 body.dark .dictionary-container {
   background-color: #34e95892;
@@ -145,4 +148,59 @@ body.dark .error-message {
   color: #ff6b6b;
 }
 
+/* Button common style used by both Search and Speak */
+/* Button container: search + speak in one row */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+/* Same style for both buttons */
+.btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+/* Disabled state */
+.btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+/* Hover & active effects */
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Mic button (optional different shade) */
+.btn.mic {
+  background-color: #0b84ff;
+  /* same as #007bff if you want exact match */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+}
+
+.btn-audio {
+  background-color: #0b84ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.9rem;
+}
 
