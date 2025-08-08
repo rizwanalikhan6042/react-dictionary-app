@@ -7,15 +7,17 @@ function useDictionary() {
     const [error, setError] = useState(null);
     const [audio, setAudio] = useState(null);
     const [definition, setDefinition] = useState("");
-    const [searchHistory, setSearchHistory] = useState([])
+    const [searchHistory, setSearchHistory] = useState([]);
     const [isPlaying, setIsPlaying] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
 
-    const handleSearch = async () => {
-        speechSynthesis.cancel(); // ⛔ Stop previous audio if playing
+    // 🔹 Handle search (works for manual + voice input)
+    const handleSearch = async (searchTerm) => {
+        const query = String(searchTerm || word||"").trim(); // agar voice se aya toh use karega
+        speechSynthesis.cancel();
         setIsPlaying(false);
-        // ⚠️ Check for empty word
-        if (!word.trim()) {
+
+        if (!query) {
             setError("Please enter a word.");
             setMeaning([]);
             setAudio(null);
@@ -28,68 +30,47 @@ function useDictionary() {
         setAudio(null);
 
         try {
-            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${query}`);
             const data = await response.json();
-            // ❌ If response is not an array, it's an error
+
             if (!Array.isArray(data)) {
                 setError(data.message || "Word not found.");
                 return;
             }
-            if (word) {
-                const alreadyExists = searchHistory.includes(word);
-                if (!alreadyExists) {
-                    setSearchHistory(function (previousHistory) {
-                        return [word, ...previousHistory];
-                    })
-                }
+
+            if (query && !searchHistory.includes(query)) {
+                setSearchHistory(prev => [query, ...prev]);
             }
-            // ✅ Set meaning
+
             if (data[0]?.meanings) {
                 setMeaning(data[0].meanings);
             }
-            console.log(data[0].meanings)
-            // ✅ Your phonetics audio logic
-            let phonetics = [];
-            if (data.length > 0 && data[0].phonetics) {
-                phonetics = data[0].phonetics;
-            }
-            console.log(phonetics)
 
-            let foundAudio = null;
-            for (let i = 0; i < phonetics.length; i++) {
-                if (phonetics[i].audio) {
-                    foundAudio = phonetics[i];
-                    break;
-                }
-            }
-            console.log(foundAudio)
-
-            if (foundAudio !== null) {
-                setAudio(foundAudio.audio);
-            } else {
-                setAudio(null); // No audio found
-            }
+            let phonetics = data[0]?.phonetics || [];
+            let foundAudio = phonetics.find(p => p.audio);
+            setAudio(foundAudio ? foundAudio.audio : null);
 
         } catch (err) {
-            setError("");
+            setError("An error occurred while fetching the data.");
         } finally {
             setIsLoading(false);
         }
     };
-    useEffect(() => {
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-    }, [searchHistory]);
-    useEffect(() => {
-        document.body.className = darkMode ? 'dark' : 'light';
 
+    // Save history in localStorage
+    useEffect(() => {
+        localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+    }, [searchHistory]);
+
+    // Dark mode toggle
+    useEffect(() => {
+        document.body.className = darkMode ? "dark" : "light";
     }, [darkMode]);
 
-    const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-    }
+    const toggleDarkMode = () => setDarkMode(!darkMode);
 
+    // Play all definitions one by one
     const handlePlayDefinitions = () => {
-
         if (!meaning || meaning.length === 0) return;
         let index = 0;
 
@@ -97,54 +78,76 @@ function useDictionary() {
             if (index >= meaning.length) {
                 setIsPlaying(false);
                 return;
-
             }
+
             const definitions = meaning[index].definitions;
             if (!definitions || definitions.length === 0) {
                 index++;
-                speakNext(); // skip if no definitions
+                speakNext();
                 return;
             }
+
             const def = definitions[0].definition;
             const utterance = new SpeechSynthesisUtterance(def);
             utterance.onend = () => {
                 index++;
-                speakNext()
-            }
+                speakNext();
+            };
             speechSynthesis.speak(utterance);
-        }
-        setIsPlaying(true)
-        speakNext()
-    }
+        };
 
+        setIsPlaying(true);
+        speakNext();
+    };
 
-
-
+    // Toggle definition audio
     const toggleDefinitionAudio = () => {
         if (isPlaying) {
-            // If already playing, stop it
             speechSynthesis.cancel();
             setIsPlaying(false);
         } else {
-            // If not playing, start speaking definitions
             handlePlayDefinitions();
-            setIsPlaying(true)
         }
     };
 
+    // 🎤 Voice input
+    const startListening = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Your browser does not support voice input.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            setWord(transcript);
+            handleSearch(transcript); // direct search
+            console.log("Voice input:", transcript);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            setError("Voice input failed. Please try again.");
+        };
+
+        recognition.start();
+    };
 
     return {
-        word,
-        setWord,
-        meaning,
-        isLoading,
-        handleSearch,
-        error,
-        audio, definition, setDefinition
-        , searchHistory, setSearchHistory, toggleDefinitionAudio, isPlaying, setIsPlaying, handlePlayDefinitions
-        , darkMode, setDarkMode, toggleDarkMode
+        word, setWord,
+        meaning, isLoading,
+        handleSearch, error,
+        audio, definition, setDefinition,
+        searchHistory, setSearchHistory,
+        toggleDefinitionAudio, isPlaying, setIsPlaying, handlePlayDefinitions,
+        darkMode, setDarkMode, toggleDarkMode,
+        startListening
     };
 }
-
 
 export default useDictionary;
